@@ -1,0 +1,99 @@
+version: "1.0"
+namespace: docs_tools
+
+entries:
+  - name: definition
+    kind: ns.definition
+    readme: file://README.md
+    meta:
+      title: Wippy Documentation Tools
+      description: MCP tools for searching and reading Wippy documentation from LLM clients
+
+  - name: dependency.mcp
+    kind: ns.dependency
+    component: butschster/mcp-server
+    version: ">=0.1.0"
+
+  - name: docs_search
+    kind: function.lua
+    source: file://docs_search.lua
+    method: call
+    modules:
+      - http_client
+    meta:
+      mcp.tool: true
+      mcp.name: "wippy_docs_search"
+      mcp.description: "Search the Wippy documentation. Returns matching chunks with IDs, paths, scores, and summaries. Use chunk IDs with wippy_docs_lookup to get full content or find related topics."
+      mcp.inputSchema:
+        type: "object"
+        properties:
+          query:
+            type: "string"
+            description: "Search query (e.g. 'http routing', 'process spawn', 'sql query')"
+        required:
+          - "query"
+      mcp.annotations:
+        readOnlyHint: true
+
+  - name: docs_read
+    kind: function.lua
+    source: file://docs_read.lua
+    method: call
+    modules:
+      - http_client
+    meta:
+      mcp.tool: true
+      mcp.name: "wippy_docs_read"
+      mcp.description: "Read full Wippy documentation pages by path. Supports single page or comma-separated batch fetch. Set summary=true for a quick overview instead of full content. Paths come from the TOC or search results (e.g. 'lua/http/client', 'guides/cli')."
+      mcp.inputSchema:
+        type: "object"
+        properties:
+          path:
+            type: "string"
+            description: "Page path or comma-separated paths (e.g. 'start/about' or 'lua/core/process,lua/core/channel')"
+          summary:
+            type: "boolean"
+            description: "If true, return section summaries instead of full content"
+        required:
+          - "path"
+      mcp.annotations:
+        readOnlyHint: true
+
+  - name: docs_toc
+    kind: function.lua
+    source: file://docs_toc.lua
+    method: call
+    modules:
+      - http_client
+    meta:
+      mcp.tool: true
+      mcp.name: "wippy_docs_toc"
+      mcp.description: "Get the Wippy documentation table of contents. Returns the full JSON structure of all 93 pages organized by section. Use the paths from the TOC with wippy_docs_read to fetch page content."
+      mcp.inputSchema:
+        type: "object"
+      mcp.annotations:
+        readOnlyHint: true
+
+  - name: docs_lookup
+    kind: function.lua
+    source: file://docs_lookup.lua
+    method: call
+    modules:
+      - http_client
+    meta:
+      mcp.tool: true
+      mcp.name: "wippy_docs_lookup"
+      mcp.description: "Look up a specific documentation chunk by ID, or find related content. Chunk IDs come from search results in 'path#anchor' format (e.g. 'http/router#routing'). Set related=true to discover linked topics instead of fetching the chunk itself."
+      mcp.inputSchema:
+        type: "object"
+        properties:
+          id:
+            type: "string"
+            description: "Chunk ID in 'path#anchor' format (e.g. 'http/router#routing', 'lua/core/process#spawn')"
+          related:
+            type: "boolean"
+            description: "If true, return related/linked topics instead of chunk content"
+        required:
+          - "id"
+      mcp.annotations:
+        readOnlyHint: true

@@ -1,0 +1,9 @@
+organization: butschster
+module: mcp-docs-tools
+description: MCP tools for searching and reading Wippy documentation from LLM clients
+license: MIT
+keywords:
+  - mcp
+  - documentation
+  - search
+  - wippy
