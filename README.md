@@ -4,24 +4,23 @@ MCP tools for searching and reading the [Wippy documentation](https://home.wj.wi
 from an LLM client. Backed by the Wippy docs LLM API — search, browse, read pages, and traverse
 related content without leaving the conversation.
 
-## Dependency
-
-Requires [`butschster/mcp-server`](../mcp/) — the MCP server that discovers and exposes these tools.
+### Installation
 
 ```yaml
-# wippy.yaml
-organization: butschster
-module: docs-tools
+- name: dependency.repl
+  kind: ns.dependency
+  component: butschster/mcp-docs-tools
+  version: ">=0.1.0"
 ```
 
 ## Tools
 
-| Tool | Endpoint | Description |
-|------|----------|-------------|
-| `wippy_docs_search` | `/llm/search?q=` | Full-text search across all 93 doc pages. Returns chunk IDs, paths, scores, and summaries. |
-| `wippy_docs_read` | `/llm/path/en/` | Read full page content by path. Supports comma-separated batch fetch and `summary=true` mode. |
-| `wippy_docs_toc` | `/llm/toc` | Get the complete table of contents as JSON. |
-| `wippy_docs_lookup` | `/llm/chunk/` | Get a specific chunk by ID, or find related content with `related=true`. |
+| Tool                | Endpoint         | Description                                                                                   |
+|---------------------|------------------|-----------------------------------------------------------------------------------------------|
+| `wippy_docs_search` | `/llm/search?q=` | Full-text search across all 93 doc pages. Returns chunk IDs, paths, scores, and summaries.    |
+| `wippy_docs_read`   | `/llm/path/en/`  | Read full page content by path. Supports comma-separated batch fetch and `summary=true` mode. |
+| `wippy_docs_toc`    | `/llm/toc`       | Get the complete table of contents as JSON.                                                   |
+| `wippy_docs_lookup` | `/llm/chunk/`    | Get a specific chunk by ID, or find related content with `related=true`.                      |
 
 ## Typical Workflow
 
@@ -33,31 +32,37 @@ module: docs-tools
 ### Examples
 
 Search for HTTP routing:
+
 ```
 wippy_docs_search(query="http routing middleware")
 ```
 
 Read a page:
+
 ```
 wippy_docs_read(path="lua/http/client")
 ```
 
 Batch read multiple pages:
+
 ```
 wippy_docs_read(path="lua/core/process,lua/core/channel")
 ```
 
 Get a summary instead of full content:
+
 ```
 wippy_docs_read(path="guides/configuration", summary=true)
 ```
 
 Look up a chunk from search results:
+
 ```
 wippy_docs_lookup(id="http/router#routing")
 ```
 
 Find related content:
+
 ```
 wippy_docs_lookup(id="http/router#routing", related=true)
 ```
